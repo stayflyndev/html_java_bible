@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface VersesRepository extends MongoRepository<BibleStudyPlan, ObjectId> {
+public interface  VersesRepository extends MongoRepository<BibleStudyPlan, ObjectId> {
 }

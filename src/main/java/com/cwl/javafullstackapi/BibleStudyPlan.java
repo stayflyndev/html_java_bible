@@ -1,4 +1,5 @@
 package com.cwl.javafullstackapi;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,18 +15,29 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BibleStudyPlan {
 
     @Id
     private ObjectId _id;
-    //private TopicInfo topicInfo;
+    private TopicInfo topicInfo;
     private List<ReadingPlanEntry> readingPlan;
 
 }
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class TopicInfo {
+    private String topic;
+    private String daysRequested;
+    private String daysFilled;
+}
 
-//class TopicInfo {
-//    private String topic;
-//    private String daysRequested;
-//    private String daysFilled;
-//}
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class ReadingPlanEntry {
+    private int day;
+    private String date;
+    private List<String> verseIds;
+}
