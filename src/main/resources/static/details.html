@@ -3,104 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Topic Details</title>
+    <title>Bible Study - Topic Details</title>
     <style>
-        .topic-details {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        #topic-details {
+            padding: 20px;
+            background-color: #ffffff;
             margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .verse-list {
-            margin-left: 20px;
+        #topic-details h2 {
+            margin-top: 0;
         }
-        .citation {
-            font-weight: bold;
-        }
-        .topic-name {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            font-weight: bold;
+        .verse {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            border-left: 5px solid #4CAF50;
         }
     </style>
 </head>
 <body>
+<header>
+    <h1>Bible Study - Topic Details</h1>
+</header>
 
-<h1>Topic Details</h1>
-
-<!-- Section to display the selected topic name -->
-<div id="selectedTopicName" class="topic-name"></div>
-
-<!-- Section to display topic details -->
-<div id="topicDetails">
-    <h2>Loading...</h2>
+<div id="topic-details">
+    <h2>Topic Details</h2>
+    <p id="topic-citation"></p>
+    <p id="verse-topic"></p>
+    <div id="verse-list">
+        <!-- Verses will be displayed here -->
+    </div>
 </div>
 
 <script>
-    // Get the topic from the URL query parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const topic = urlParams.get('topic');
+    // Function to fetch details for a specific topic
+ async function fetchTopicDetails(topic) {
+     try {
+         // Fetch topic details from backend
+         const response = await fetch(`http://localhost:8080/reading/get-topic-details?topic=${topic}`);
+         const topicDetails = await response.json();
 
-    // Set the selected topic name at the top of the page
-    document.addEventListener('DOMContentLoaded', () => {
-        if (topic) {
-            // Display the selected topic name
-            document.getElementById('selectedTopicName').textContent = `Topic: ${topic}`;
+         const topicDetailsDiv = document.getElementById('topic-details');
+         const citationElement = document.getElementById('topic-citation');
+         const verseList = document.getElementById('verse-list');
+         const verseTopic = document.getElementById('verse-topic');
 
-            // Fetch topic details
-            fetchTopicDetails(topic);
-        } else {
-            document.getElementById('topicDetails').textContent = 'No topic specified.';
-        }
-    });
+         // Clear previous details
+         citationElement.innerHTML = '';
+         verseList.innerHTML = '';
 
-    // Function to fetch details of the selected topic from the backend
-    function fetchTopicDetails(topic) {
-        fetch(`http://localhost:8080/reading/get-topic-details?topic=${topic}`)
-            .then(response => response.json())  // Assuming the response is a JSON array with topic details
-            .then(data => {
-                displayTopicDetails(data);
-            })
-            .catch(error => {
-                console.error('Error fetching topic details:', error);
-                document.getElementById('topicDetails').textContent = 'Error fetching details.';
-            });
-    }
+         // Check if there are any details returned for the topic
+         if (topicDetails.length > 0) {
+             // Loop through each topicDetail object in the array
+             topicDetails.forEach(topicDetail => {
+                 // Create a section for each topic detail
+                 const topicSection = document.createElement('div');
+                 topicSection.classList.add('topic-section');
 
-    // Function to display the topic details on the page
-    function displayTopicDetails(details) {
-        const topicDetailsElement = document.getElementById('topicDetails');
-        topicDetailsElement.innerHTML = ''; // Clear loading text
+                 // Display the citation for the topic
+                 const citationPara = document.createElement('p');
+                 citationPara.textContent = `Citation: ${topicDetail.citation}`;
+                 topicSection.appendChild(citationPara);
 
-        if (details.length > 0) {
-            details.forEach(detail => {
-                // Create a container for each topic
-                const topicDiv = document.createElement('div');
-                topicDiv.classList.add('topic-details');
+                 // Loop through each verse and display it
+                 const verseListDiv = document.createElement('div');
+                 topicDetail.verses.forEach(verse => {
+                     const verseDiv = document.createElement('div');
+                     verseDiv.classList.add('verse');
+                     verseDiv.innerHTML = `<strong>${verse.reference}</strong>: ${verse.text}`;
+                     verseListDiv.appendChild(verseDiv);
+                 });
 
-                // Create and display the citation
-                const citationElement = document.createElement('p');
-                citationElement.classList.add('citation');
-                citationElement.textContent = detail.citation;
-                topicDiv.appendChild(citationElement);
+                 // Append the verse list for this topic detail
+                 topicSection.appendChild(verseListDiv);
 
-                // Create a list for verse IDs
-                const verseList = document.createElement('ul');
-                verseList.classList.add('verse-list');
-                detail.verseIds.forEach(verseId => {
-                    const verseItem = document.createElement('li');
-                    verseItem.textContent = `Verse ID: ${verseId}`;
-                    verseList.appendChild(verseItem);
-                });
+                 // Add the topic section to the main topic details div
+                 topicDetailsDiv.appendChild(topicSection);
+             });
 
-                // Append the verse list to the topic container
-                topicDiv.appendChild(verseList);
+             topicDetailsDiv.style.display = 'block'; // Show the topic details
+         } else {
+             citationElement.textContent = 'No details available for this topic.';
+         }
+     } catch (error) {
+         console.error('Error fetching topic details:', error);
+     }
+ }
 
-                // Append the topic container to the main topic details section
-                topicDetailsElement.appendChild(topicDiv);
-            });
-        } else {
-            topicDetailsElement.textContent = "No details found for this topic.";
-        }
-    }
+ // Get the topic from URL query parameter
+ function getTopicFromUrl() {
+     const urlParams = new URLSearchParams(window.location.search);
+     return urlParams.get('topic');
+ }
+
+ // Fetch the topic details when the page loads
+ document.addEventListener('DOMContentLoaded', () => {
+     const topic = getTopicFromUrl(); // Get the topic from the URL
+     if (topic) {
+         fetchTopicDetails(topic); // Fetch the details for the topic
+     } else {
+         alert("Topic not found in the URL.");
+     }
+ });
+
 </script>
-
 </body>
 </html>
