@@ -22,7 +22,7 @@ public class BibleStudyController {
         String apiUrl = "https://iq-bible.p.rapidapi.com/GetTopics";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Rapidapi-Key", "e04afe04dcmsh09d194f53729252p158814jsn852c55c5f620");
+        headers.set("X-Rapidapi-Key", "");
         headers.set("X-Rapidapi-Host", "iq-bible.p.rapidapi.com");
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -43,7 +43,7 @@ public class BibleStudyController {
         String apiUrl = "https://iq-bible.p.rapidapi.com/GetTopic?topic=" + topic;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Rapidapi-Key", "e04afe04dcmsh09d194f53729252p158814jsn852c55c5f620");
+        headers.set("X-Rapidapi-Key", "");
         headers.set("X-Rapidapi-Host", "iq-bible.p.rapidapi.com");
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -74,7 +74,7 @@ public class BibleStudyController {
         String apiUrl = "https://iq-bible.p.rapidapi.com/GetVerse?verseId=" + verseId + "&versionId=bbe";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Rapidapi-Key", "e04afe04dcmsh09d194f53729252p158814jsn852c55c5f620");
+        headers.set("X-Rapidapi-Key", "");
         headers.set("X-Rapidapi-Host", "iq-bible.p.rapidapi.com");
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
